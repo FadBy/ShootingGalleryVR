@@ -10,7 +10,7 @@ public class GunShoot : MonoBehaviour
     public GameObject hitEffectPrefab;
 
     [Header("Input")]
-    public InputActionReference shootAction; // ссылка на Input Action
+    public InputActionReference shootAction;
 
     private void OnEnable()
     {
@@ -26,8 +26,16 @@ public class GunShoot : MonoBehaviour
 
     private void OnShoot(InputAction.CallbackContext ctx)
     {
-        // 🔫 Сообщение при каждом выстреле
-        Debug.Log("🔫 Выстрел произведён!");
+        if (GameManager.Instance == null) return;
+
+        // проверка на патроны
+        if (GameManager.Instance.currentAmmo <= 0)
+        {
+            Debug.Log("❌ Патроны закончились!");
+            return;
+        }
+
+        GameManager.Instance.UseAmmo();
 
         RaycastHit hit;
         if (Physics.Raycast(muzzle.position, muzzle.forward, out hit, shootDistance))
@@ -36,6 +44,13 @@ public class GunShoot : MonoBehaviour
 
             if (hitEffectPrefab)
                 Instantiate(hitEffectPrefab, hit.point, Quaternion.LookRotation(hit.normal));
+
+            // Проверяем, есть ли скрипт Target
+            Target target = hit.collider.GetComponent<Target>();
+            if (target != null)
+            {
+                target.Hit();
+            }
 
             if (hit.rigidbody)
                 hit.rigidbody.AddForce(-hit.normal * hitForce, ForceMode.Impulse);
