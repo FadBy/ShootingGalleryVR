@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class GunShoot : MonoBehaviour
@@ -11,6 +12,11 @@ public class GunShoot : MonoBehaviour
 
     [Header("Input")]
     public InputActionReference shootAction;
+    
+    public event Action ShootCallback;
+    
+    public RaycastHit HitPoint { get; private set; }
+    public bool DidHit { get; private set; }
 
     private void OnEnable()
     {
@@ -40,6 +46,8 @@ public class GunShoot : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(muzzle.position, muzzle.forward, out hit, shootDistance))
         {
+            DidHit = true;
+            HitPoint = hit;
             Debug.Log("🎯 Попадание в: " + hit.collider.name);
 
             if (hitEffectPrefab)
@@ -57,7 +65,10 @@ public class GunShoot : MonoBehaviour
         }
         else
         {
+            DidHit = false;
             Debug.Log("💨 Мимо. Луч никуда не попал.");
         }
+        
+        ShootCallback?.Invoke();
     }
 }

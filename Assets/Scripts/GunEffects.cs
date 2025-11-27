@@ -1,34 +1,45 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.VFX;
 
 public class GunEffects : MonoBehaviour
 {
+    public BulletTrail _bulletTrailPrefab;
     public List<VisualEffect> _effects;
-    
-    [Header("Input")]
-    public InputActionReference shootAction;
+
+    private GunShoot _gunShoot;
+
+    private void Awake()
+    {
+        _gunShoot = GetComponent<GunShoot>();
+    }
 
     private void OnEnable()
     {
-        if (shootAction != null)
-            shootAction.action.performed += OnShoot;
+        _gunShoot.ShootCallback += OnShoot;
     }
 
     private void OnDisable()
     {
-        if (shootAction != null)
-            shootAction.action.performed -= OnShoot;
+        _gunShoot.ShootCallback -= OnShoot;
     }
 
-    private void OnShoot(InputAction.CallbackContext ctx)
+    private void OnShoot()
     {
-        if (GameManager.Instance.currentAmmo <= 0) return;
         foreach (var effect in _effects)
         {
             effect.Play();
+        }
+        
+        var bulletTrail = Instantiate(_bulletTrailPrefab, _gunShoot.muzzle.transform.position, _gunShoot.transform.rotation);
+        if (_gunShoot.DidHit)
+        {
+            bulletTrail.EndPoint = _gunShoot.HitPoint.point;
+        }
+        else
+        {
+            bulletTrail.EndPoint = bulletTrail.transform.position + _gunShoot.muzzle.forward * 100;
+            
         }
     }
 }
