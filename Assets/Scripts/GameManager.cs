@@ -11,6 +11,9 @@ public class GameManager : MonoBehaviour
 
     [Header("UI")]
     public UIManager uiManager;
+    public AmmoUI ammoUI;
+    public ScoreUI scoreUI;
+    public EndGameUI endGameUI;
 
     private bool gameOver = false;
 
@@ -23,7 +26,9 @@ public class GameManager : MonoBehaviour
     {
         currentAmmo = maxAmmo;
         uiManager.UpdateAmmo(currentAmmo);
+        ammoUI.UpdateAmmo(currentAmmo);
         uiManager.UpdateScore(score);
+        scoreUI.UpdateScore(score);
     }
 
     public void UseAmmo()
@@ -32,6 +37,7 @@ public class GameManager : MonoBehaviour
 
         currentAmmo--;
         uiManager.UpdateAmmo(currentAmmo);
+        ammoUI.UpdateAmmo(currentAmmo);
 
         if (currentAmmo <= 0)
             EndGame();
@@ -43,12 +49,14 @@ public class GameManager : MonoBehaviour
 
         score += amount;
         uiManager.UpdateScore(score);
+        scoreUI.UpdateScore(score);
     }
 
     private void EndGame()
     {
         gameOver = true;
         uiManager.ShowEndScreen(score);
+        endGameUI.ShowEndScreen(score);
         Debug.Log("🏁 Игра окончена! Итоговый счёт: " + score);
     }
 }
