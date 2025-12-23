@@ -10,17 +10,27 @@ public class UIManager : MonoBehaviour
 
     public void UpdateAmmo(int ammo)
     {
-        ammoText.text = "Патроны: " + ammo;
+        if (ammoText != null)
+            ammoText.text = $"Р‘РѕРµРїСЂРёРїР°СЃС‹: {ammo}";
     }
 
     public void UpdateScore(int score)
     {
-        scoreText.text = "Очки: " + score;
+        if (scoreText != null)
+            scoreText.text = $"РћС‡РєРё: {score}";
     }
 
     public void ShowEndScreen(int finalScore)
     {
-        endScreen.SetActive(true);
-        endScoreText.text = "Игра окончена!\nОчки: " + finalScore;
+        if (endScreen != null)
+            endScreen.SetActive(true);
+        if (endScoreText != null)
+            endScoreText.text = $"РРіСЂР° РѕРєРѕРЅС‡РµРЅР°!\nРћС‡РєРё: {finalScore}";
+    }
+
+    public void HideEndScreen()
+    {
+        if (endScreen != null)
+            endScreen.SetActive(false);
     }
 }
